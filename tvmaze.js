@@ -13,14 +13,14 @@ const $searchForm = $("#searchForm");
 
 async function getShowsByTerm(term) {
   const res = await axios.get(`http://api.tvmaze.com/search/shows?q=${term}`); // base url global variable
-  console.log(res.data)
+  console.log(res.data);
   return res.data.map((scoreAndShow) => {
     return {
-      id: scoreAndShow.show.id, 
-      name: scoreAndShow.show.name, 
-      summary: scoreAndShow.show.summary, 
-      image: scoreAndShow.show.image 
-    }
+      id: scoreAndShow.show.id,
+      name: scoreAndShow.show.name,
+      summary: scoreAndShow.show.summary,
+      image: scoreAndShow.show.image,
+    };
   });
 
   // sample output for getShowsByTerm()
@@ -52,8 +52,8 @@ function populateShows(shows) {
     const showImage = show.image
       ? show.image.medium
       : "https://tinyurl.com/tv-missing"; //make this a global constant
-    const showSummary = show.summary 
-      ? show.summary 
+    const showSummary = show.summary
+      ? show.summary
       : "No description provided.";
     const $show = $(
       `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
@@ -99,28 +99,49 @@ $searchForm.on("submit", async function (evt) {
  *      { id, name, season, number }
  */
 
-async function getEpisodesOfShow(id) { 
+async function getEpisodesOfShow(id) {
   //http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes.
   //get episode id, name, season, number
   // return an array of objects with this data
   let episodeList = [];
   let episodes = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
-  // console.log(episodes);
-  // console.log(episodes.length);
+
   for (let i = 0; i < episodes.data.length; i++) {
     let data = episodes.data;
     // console.log(data[i]);
     episodeList.push({
       id: data[i].id,
-      name: data[i].name, 
-      season: data[i].season, 
-      number: data[i].number
+      name: data[i].name,
+      season: data[i].season,
+      number: data[i].number,
     });
   }
   console.log(episodeList);
   return episodeList;
 }
 
-/** Write a clear docstring for this function... */
+/** populateEpisodes: takes an array of objects
+ *
+ * creates a list appened to ul (#episodeList);
+ */
 
-// function populateEpisodes(episodes) { }
+//1. Create variables need to create list (ul, #episodeList), li Name
+//2. empty the li when clicked on for different episode button
+//3. loop through array and display season and name on list
+//4. append li to #episode list currently in dom.
+
+function populateEpisodes(episodes) {
+  const $episodeList = $("#episodesList");
+
+  $episodeList.empty();
+
+  for (let episode of episodes) {
+    const $listItem = $(
+      `<li>Pilot episode ${episode.season}, number ${episode.name}</li>`
+    );
+
+    $episodeList.append($listItem);
+  }
+}
+
+//$episodeList.css("display", )
